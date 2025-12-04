@@ -13,3 +13,17 @@ exports.showMembersPage = (req, res) => {
 exports.get404Page = (req, res, next) => {
     res.status(404).render('404')
 }
+
+exports.signup = async (req, res, next) => {
+    const { username, email, password } = req.body;
+    const user = new User(username, email, password);
+
+    try {
+        await user.save();
+        res.redirect('/members')
+    } catch (error) {
+        console.log(error);
+        res.redirect('signup');
+    }
+
+}
