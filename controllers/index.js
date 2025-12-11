@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
 exports.showIndex = (req, res, next) => {
@@ -18,13 +19,13 @@ exports.get404Page = (req, res, next) => {
 
 exports.signup = async (req, res, next) => {
     const { username, email, password } = req.body;
-    const user = new User(username, email, password);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    console.log(user);
+    const user = new User(username, email, hashedPassword);
 
     try {
         await user.save();
-        res.redirect('/members')
+        res.redirect('/members');
     } catch (error) {
         console.log(error);
         res.redirect('signup');
