@@ -1,3 +1,5 @@
+const User = require('../models/user');
+
 exports.showIndex = (req, res, next) => {
     res.render('index')
 }
@@ -18,6 +20,8 @@ exports.signup = async (req, res, next) => {
     const { username, email, password } = req.body;
     const user = new User(username, email, password);
 
+    console.log(user);
+
     try {
         await user.save();
         res.redirect('/members')
@@ -25,5 +29,22 @@ exports.signup = async (req, res, next) => {
         console.log(error);
         res.redirect('signup');
     }
+}
 
+exports.login = async (req, res, next) => {
+    const { email, password } = req.body;
+
+    const user = await User.findOne(email, password);
+
+    try {
+        if(user) {    
+            console.log(user);
+            res.redirect('/members');
+        } else {
+            res.render('index');
+        }
+    } catch(err) {
+        console.log(err);
+        res.render('index');
+    }
 }
